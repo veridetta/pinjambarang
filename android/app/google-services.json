@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "732184981487",
+    "project_id": "pinjambarang-2360c",
+    "storage_bucket": "pinjambarang-2360c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732184981487:android:e7b39e9460831eae31501a",
+        "android_client_info": {
+          "package_name": "com.example.pinjambarang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsl4q-mNE2wQpc3fUlWsi_lZFfQaOQc9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732184981487:android:dcc2bc26cddafebc31501a",
+        "android_client_info": {
+          "package_name": "com.example.pinjambarang.pinjambarang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsl4q-mNE2wQpc3fUlWsi_lZFfQaOQc9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
