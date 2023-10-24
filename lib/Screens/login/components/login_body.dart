@@ -1,11 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:pinjambarang/Screens/user/user_page.dart';
 
 import '../../../components/my_button.dart';
 import '../../../components/my_textfield.dart';
+import '../../homepage/home_page.dart';
 import '../../signup/sign_up.dart';
 
 class LoginBodyScreen extends StatefulWidget {
@@ -18,13 +21,51 @@ class LoginBodyScreen extends StatefulWidget {
 class _LoginBodyScreenState extends State<LoginBodyScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isLoading = false; // Menambahkan indikator loading
 
   void signUserIn() async {
     try {
+      setState(() {
+        isLoading = true; // Menampilkan indikator loading saat proses login
+      });
+
       // Masuk menggunakan email dan password
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      setState(() {
+        isLoading = false; // Menghilangkan indikator loading setelah berhasil login
+      });
+      //ambil data dari user
+      final user = FirebaseAuth.instance.currentUser!;
+      // Ambil data dari Firestore
+      final userData = await FirebaseFirestore.instance
+          .collection('user')
+          .where('uid', isEqualTo: user.uid)
+          .get();
+      if (userData.docs.isNotEmpty) {
+        var documentSnapshot = userData.docs.first;
+        var data = documentSnapshot.data() as Map<String, dynamic>;
+        var userType = data['userType'];
+
+        if (userType == 'Admin') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => UserScreen()),
+          );
+        }
+      }
     } on FirebaseAuthException catch (e) {
+      setState(() {
+        isLoading = false; // Menghilangkan indikator loading saat terjadi kesalahan
+      });
       showErrorMessage(e.code);
     }
   }
@@ -32,12 +73,13 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
   void showErrorMessage(String message) {
     // Tampilkan dialog dengan pesan error
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(message),
-          );
-        });
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(message),
+        );
+      },
+    );
   }
 
   String _errorMessage = "";
@@ -67,7 +109,7 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.green,
         body: ListView(
-          padding: const EdgeInsets.fromLTRB(0, 400, 0, 0),
+          padding: const EdgeInsets.fromLTRB(0, 200, 0, 0),
           shrinkWrap: true,
           reverse: true,
           children: [
@@ -77,7 +119,7 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                 Stack(
                   children: [
                     Container(
-                      height: 535,
+                      height: 650,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: HexColor("#ffffff"),
@@ -91,12 +133,20 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Log In",
-                              style: GoogleFonts.poppins(
-                                fontSize: 40,
-                                fontWeight: FontWeight.bold,
-                                color: HexColor("#4f4f4f"),
+                            Center(
+                              child: Image.asset(
+                                'assets/images/logo.png',
+                                scale: 1.5,
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                "Log In",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: HexColor("#4f4f4f"),
+                                ),
                               ),
                             ),
                             const SizedBox(
@@ -128,7 +178,7 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                                   ),
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                                    const EdgeInsets.fromLTRB(8, 0, 0, 0),
                                     child: Text(
                                       _errorMessage,
                                       style: GoogleFonts.poppins(
@@ -159,7 +209,11 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                                   const SizedBox(
                                     height: 20,
                                   ),
-                                  MyButton(
+                                  isLoading
+                                      ? Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                      : MyButton(
                                     onPressed: signUserIn,
                                     buttonText: 'Submit',
                                   ),
@@ -168,7 +222,7 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                                   ),
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(35, 0, 0, 0),
+                                    const EdgeInsets.fromLTRB(35, 0, 0, 0),
                                     child: Row(
                                       children: [
                                         Text("Belum punya akun?",
@@ -188,7 +242,7 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const SignUpScreen(),
+                                              const SignUpScreen(),
                                             ),
                                           ),
                                         ),
@@ -200,14 +254,6 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    Transform.translate(
-                      offset: const Offset(0, -253),
-                      child: Image.asset(
-                        'assets/images/plants2.png',
-                        scale: 1.5,
-                        width: double.infinity,
                       ),
                     ),
                   ],

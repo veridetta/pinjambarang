@@ -4,18 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 import 'package:pinjambarang/Screens/barang/editBarangPage.dart';
-import 'package:pinjambarang/Screens/homepage/components/pinjaman_page_body.dart';
+import 'package:pinjambarang/Screens/homepage/home_page.dart';
+import 'package:pinjambarang/Screens/user/addPinjamPage.dart';
 
 import '../../account/akunPage.dart';
 import '../../article/detailArtikelPage.dart';
 import '../../barang/addBarangPage.dart';
 import '../../login/login.dart';
 
-class HomeScreenBody extends StatefulWidget {
-  const HomeScreenBody({Key? key}) : super(key: key);
+class UserScreenBody extends StatefulWidget {
+  const UserScreenBody({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreenBody> createState() => _HomeScreenBodyState();
+  State<UserScreenBody> createState() => _UserScreenBodyState();
 }
 
 class UserProfileDrawerHeader extends StatefulWidget {
@@ -26,7 +27,6 @@ class UserProfileDrawerHeader extends StatefulWidget {
 
 class _UserProfileDrawerHeaderState extends State<UserProfileDrawerHeader> {
   final FirebaseAuth auth = FirebaseAuth.instance;
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -58,7 +58,9 @@ class _UserProfileDrawerHeaderState extends State<UserProfileDrawerHeader> {
 
           var username = data['name'];
           var email = data['email'];
+          var divisi = data['divisi'];
           var userType = data['userType'];
+          //jika userType admin dialihkan ke homeScreen
           var imageUrl = data['imageUrl'];
 
           return UserAccountsDrawerHeader(
@@ -70,7 +72,6 @@ class _UserProfileDrawerHeaderState extends State<UserProfileDrawerHeader> {
           );
         }
 
-
         return UserAccountsDrawerHeader(
           accountName: Text('No data'),
           accountEmail: Text('No data'),
@@ -81,8 +82,9 @@ class _UserProfileDrawerHeaderState extends State<UserProfileDrawerHeader> {
   }
 }
 
-class _HomeScreenBodyState extends State<HomeScreenBody> {
+class _UserScreenBodyState extends State<UserScreenBody> {
   String _searchKeyword = '';
+
   final TextEditingController _searchController = TextEditingController();
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -108,7 +110,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           mainAxisAlignment:
               MainAxisAlignment.spaceBetween, // memberi spasi antar widget
           children: [
-            Text('Data Barang'),
+            Text('Data Peminjaman'),
             SizedBox(
               width: 100,
             ),
@@ -116,10 +118,10 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddBarangPage()),
+                  MaterialPageRoute(builder: (context) => AddPinjamPage()),
                 );
               },
-              child: Icon(Icons.post_add_outlined),
+              child: Icon(Icons.add_circle_outlined),
             ),
           ],
         ),
@@ -146,7 +148,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
             ),
             SizedBox(height: 16),
             Text(
-              'Data Barang',
+              'Riwayat Peminjaman',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -156,8 +158,9 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('barang')
-                    .where('nama', isGreaterThanOrEqualTo: _searchKeyword)
+                    .collection('pinjam')
+                    .where('namaBarang', isGreaterThanOrEqualTo: _searchKeyword)
+                    .where('uid', isEqualTo: auth.currentUser!.uid)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
@@ -175,69 +178,36 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                     itemCount: articles.length,
                     itemBuilder: (context, index) {
                       // Mengambil data judul dan imageUrl dari artikel
-                      String judul = articles[index]['nama'];
-                      String deskripsi = articles[index]['deskripsi'];
-                      String stok = articles[index]['stok'].toString();
+                      String namaBarang = articles[index]['namaBarang'];
+                      String namaPeminjam = articles[index]['namaPeminjam'];
+                      String divisi = articles[index]['divisi'];
+                      String keterangan = articles[index]['keterangan'];
+                      String qty = articles[index]['qty'];
                       String docId = articles[index].id;
+                      //tanggal
+                      String tglPinjamString = articles[index]['tglPinjam'];
+                      String tglKembaliString = articles[index]['tglKembali'];
+
+                      var inputFormat = DateFormat('dd-MM-yyyy');
+                      var outputFormat = DateFormat('dd MMMM yyyy');
+
+                      var tglPinjam = inputFormat.parse(tglPinjamString);
+                      var tglKembali = inputFormat.parse(tglKembaliString);
+
+                      var pinjam = outputFormat.format(tglPinjam);
+                      var kembali = outputFormat.format(tglKembali);
+
+
                       return ListTile(
-                        title: Text(judul),
+                        title: Text(namaBarang),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 8),
-                            Text("Deskripsi $deskripsi"),
-                            Text("Stok $stok"),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditBarangPage( // Ganti EditBarangPage dengan halaman yang sesuai
-                                      documentId: articles[index].id,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Icon(Icons.edit), // Tombol Edit
-                            ),
-                            SizedBox(width: 16),
-                            GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text('Hapus Barang'),
-                                      content: Text('Apakah anda yakin ingin menghapus barang ini?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text('Batal'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            await FirebaseFirestore.instance
-                                                .collection('barang')
-                                                .doc(docId)
-                                                .delete();
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text('Hapus'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              child: Icon(Icons.delete), // Tombol Hapus
-                            ),
+                            Text("Keterangan : $keterangan"),
+                            Text("Qty : $qty"),
+                            Text("Tanggal Pinjam : $pinjam"),
+                            Text("Tanggal Kembali : $kembali"),
                           ],
                         ),
                       );
@@ -263,20 +233,11 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreenBody()),
+                  MaterialPageRoute(builder: (context) => UserScreenBody()),
                 );
               },
             ),
-            ListTile(
-              leading: Icon(Icons.assignment_outlined),
-              title: Text('Data Pinjaman'),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => PinjamanScreenBody()),
-                );
-              },
-            ),
+
             // Menu Profile
             ListTile(
               leading: Icon(Icons.person),

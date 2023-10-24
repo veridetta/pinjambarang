@@ -66,7 +66,7 @@ class _SignUpBodyScreenState extends State<SignUpBodyScreen> {
                     Transform.translate(
                       offset: const Offset(0, -253),
                       child: Image.asset(
-                        'assets/Images/plants2.png',
+                        'assets/images/plants2.png',
                         scale: 1.5,
                         width: double.infinity,
                       ),

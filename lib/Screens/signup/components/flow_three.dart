@@ -56,21 +56,6 @@ class _SignUpThreeState extends State<SignUpThree> {
     }
   }
 
-  Future uploadPdfFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      withData: true,
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-    );
-    if (result != null) {
-      Uint8List? fileBytes = result.files.first.bytes;
-      String pdfName = result.files.first.name;
-      signUpController
-          .setResumeFile(FileModel(filename: pdfName, fileBytes: fileBytes!));
-    }
-  }
-
   FlowController flowController = Get.put(FlowController());
 
   @override
@@ -114,80 +99,6 @@ class _SignUpThreeState extends State<SignUpThree> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (signUpController.userType == "Student") ...[
-                    Text(
-                      "Admission Year",
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        color: HexColor("#8d8d8d"),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    TextField(
-                      onChanged: (value) {
-                        signUpController.setAdmissionYear(value);
-                      },
-                      onSubmitted: (value) {
-                        signUpController.setAdmissionYear(value);
-                      },
-                      keyboardType: TextInputType.number,
-                      cursorColor: HexColor("#4f4f4f"),
-                      decoration: InputDecoration(
-                        hintText: "2020",
-                        fillColor: HexColor("#f0f3f1"),
-                        contentPadding:
-                            const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                        hintStyle: GoogleFonts.poppins(
-                          fontSize: 15,
-                          color: HexColor("#8d8d8d"),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                      ),
-                    ),
-                  ] else if (signUpController.userType == "Alumni") ...[
-                    Text(
-                      "Passout Year",
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        color: HexColor("#8d8d8d"),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    TextField(
-                      onChanged: (value) {
-                        signUpController.setPassOutYear(value);
-                      },
-                      onSubmitted: (value) {
-                        signUpController.setPassOutYear(value);
-                      },
-                      keyboardType: TextInputType.number,
-                      cursorColor: HexColor("#4f4f4f"),
-                      decoration: InputDecoration(
-                        hintText: "2020",
-                        fillColor: HexColor("#f0f3f1"),
-                        contentPadding:
-                            const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                        hintStyle: GoogleFonts.poppins(
-                          fontSize: 15,
-                          color: HexColor("#8d8d8d"),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                      ),
-                    ),
-                  ] else
-                    ...[],
                   const SizedBox(
                     height: 5,
                   ),
@@ -231,66 +142,48 @@ class _SignUpThreeState extends State<SignUpThree> {
                     height: 3,
                   ),
                   GetBuilder<SignUpController>(builder: (context) {
-                    return Text(
-                      signUpController.imageFile != null
-                          ? signUpController.imageFile!.filename
-                          : "No file selected",
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: HexColor("#8d8d8d"),
-                      ),
-                    );
+                    if (signUpController.imageFile != null) {
+                      // Tampilkan gambar yang sudah dipilih
+                      return Column(
+                        children: [
+                          const SizedBox(height: 5),
+                          Center(
+                            child: Image.memory(
+                              signUpController.imageFile!.fileBytes,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Center(
+                            child: Text(
+                              signUpController.imageFile!.filename,
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: HexColor("#8d8d8d"),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      // Tampilkan pesan jika tidak ada gambar yang dipilih
+                      return Text(
+                        "No file selected",
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: HexColor("#8d8d8d"),
+                        ),
+                      );
+                    }
                   }),
                   const SizedBox(
                     height: 5,
-                  ),
-                  Text(
-                    "Resume (Optional)",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      color: HexColor("#8d8d8d"),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0),
-                      textStyle: MaterialStateProperty.all<TextStyle?>(
-                        GoogleFonts.poppins(
-                          fontSize: 15,
-                          color: HexColor("#4f4f4f"),
-                        ),
-                      ),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          const EdgeInsets.fromLTRB(80, 15, 80, 15)),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(HexColor("#fed8c3")),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      )),
-                    ),
-                    onPressed: () {
-                      uploadPdfFile();
-                    },
-                    child: const Text("Upload your resume"),
                   ),
                   const SizedBox(
                     height: 3,
                   ),
-                  GetBuilder<SignUpController>(builder: (context) {
-                    return Text(
-                      signUpController.resumeFile == null
-                          ? "No file selected"
-                          : signUpController.resumeFile!.filename,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: HexColor("#8d8d8d"),
-                      ),
-                    );
-                  }),
                   const SizedBox(
                     height: 5,
                   ),

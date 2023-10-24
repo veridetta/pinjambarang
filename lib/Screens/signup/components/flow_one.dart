@@ -11,7 +11,7 @@ import '../../../controller/sign_up_controller.dart';
 import '../../../components/my_button.dart';
 import '../../login/login.dart';
 
-List<String> list = <String>['Pembaca', 'Penulis'];
+List<String> list = <String>['Peminjam'];
 
 class SignUpOne extends StatefulWidget {
   const SignUpOne({super.key});

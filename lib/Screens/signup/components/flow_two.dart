@@ -128,7 +128,7 @@ class _SignUpTwoState extends State<SignUpTwo> {
                     ),
                   ),
                   Text(
-                    "College Name",
+                    "Divisi Name",
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       color: HexColor("#8d8d8d"),
@@ -139,15 +139,15 @@ class _SignUpTwoState extends State<SignUpTwo> {
                   ),
                   TextField(
                     onSubmitted: (value) {
-                      signUpController.setCollegeName(value);
+                      signUpController.setDivisiName(value);
                     },
                     onChanged: (value) {
-                      signUpController.setCollegeName(value);
+                      signUpController.setDivisiName(value);
                     },
                     controller: collegeNameContoller.value,
                     cursorColor: HexColor("#4f4f4f"),
                     decoration: InputDecoration(
-                      hintText: "ABC College",
+                      hintText: "ABC Divisi",
                       fillColor: HexColor("#f0f3f1"),
                       contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                       hintStyle: GoogleFonts.poppins(
@@ -169,7 +169,7 @@ class _SignUpTwoState extends State<SignUpTwo> {
                     onPressed: () {
                       if (signUpController.mobileNumber != null &&
                           signUpController.name != null &&
-                          signUpController.collegeName != null) {
+                          signUpController.divisiName != null) {
                         flowController.setFlow(3);
                       } else {
                         Get.snackbar("Error", "Please fill all the fields");

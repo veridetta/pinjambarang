@@ -4,20 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 import 'package:pinjambarang/Screens/barang/editBarangPage.dart';
-import 'package:pinjambarang/Screens/homepage/components/pinjaman_page_body.dart';
+import 'package:pinjambarang/Screens/homepage/home_page.dart';
+import 'package:pinjambarang/Screens/user/addPinjamPage.dart';
 
 import '../../account/akunPage.dart';
 import '../../article/detailArtikelPage.dart';
 import '../../barang/addBarangPage.dart';
 import '../../login/login.dart';
+import 'home_page_body.dart';
 
-class HomeScreenBody extends StatefulWidget {
-  const HomeScreenBody({Key? key}) : super(key: key);
+class PinjamanScreenBody extends StatefulWidget {
+  const PinjamanScreenBody({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreenBody> createState() => _HomeScreenBodyState();
+  State<PinjamanScreenBody> createState() => _UserScreenBodyState();
 }
-
 class UserProfileDrawerHeader extends StatefulWidget {
   @override
   _UserProfileDrawerHeaderState createState() =>
@@ -81,8 +82,9 @@ class _UserProfileDrawerHeaderState extends State<UserProfileDrawerHeader> {
   }
 }
 
-class _HomeScreenBodyState extends State<HomeScreenBody> {
+class _UserScreenBodyState extends State<PinjamanScreenBody> {
   String _searchKeyword = '';
+
   final TextEditingController _searchController = TextEditingController();
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -108,18 +110,9 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           mainAxisAlignment:
               MainAxisAlignment.spaceBetween, // memberi spasi antar widget
           children: [
-            Text('Data Barang'),
+            Text('Data Peminjaman'),
             SizedBox(
               width: 100,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddBarangPage()),
-                );
-              },
-              child: Icon(Icons.post_add_outlined),
             ),
           ],
         ),
@@ -146,7 +139,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
             ),
             SizedBox(height: 16),
             Text(
-              'Data Barang',
+              'Riwayat Peminjaman',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -156,8 +149,8 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('barang')
-                    .where('nama', isGreaterThanOrEqualTo: _searchKeyword)
+                    .collection('pinjam')
+                    .where('namaBarang', isGreaterThanOrEqualTo: _searchKeyword)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
@@ -175,69 +168,37 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                     itemCount: articles.length,
                     itemBuilder: (context, index) {
                       // Mengambil data judul dan imageUrl dari artikel
-                      String judul = articles[index]['nama'];
-                      String deskripsi = articles[index]['deskripsi'];
-                      String stok = articles[index]['stok'].toString();
+                      String namaBarang = articles[index]['namaBarang'];
+                      String namaPeminjam = articles[index]['namaPeminjam'];
+                      String divisi = articles[index]['divisi'];
+                      String keterangan = articles[index]['keterangan'];
+                      String qty = articles[index]['qty'];
                       String docId = articles[index].id;
+                      //tanggal
+                      String tglPinjamString = articles[index]['tglPinjam'];
+                      String tglKembaliString = articles[index]['tglKembali'];
+
+                      var inputFormat = DateFormat('dd-MM-yyyy');
+                      var outputFormat = DateFormat('dd MMMM yyyy');
+
+                      var tglPinjam = inputFormat.parse(tglPinjamString);
+                      var tglKembali = inputFormat.parse(tglKembaliString);
+
+                      var pinjam = outputFormat.format(tglPinjam);
+                      var kembali = outputFormat.format(tglKembali);
+
+
                       return ListTile(
-                        title: Text(judul),
+                        title: Text(namaBarang),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 8),
-                            Text("Deskripsi $deskripsi"),
-                            Text("Stok $stok"),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditBarangPage( // Ganti EditBarangPage dengan halaman yang sesuai
-                                      documentId: articles[index].id,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Icon(Icons.edit), // Tombol Edit
-                            ),
-                            SizedBox(width: 16),
-                            GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text('Hapus Barang'),
-                                      content: Text('Apakah anda yakin ingin menghapus barang ini?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text('Batal'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            await FirebaseFirestore.instance
-                                                .collection('barang')
-                                                .doc(docId)
-                                                .delete();
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text('Hapus'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              child: Icon(Icons.delete), // Tombol Hapus
-                            ),
+                            Text("Peminjam : $namaPeminjam - $divisi"),
+                            Text("Keterangan : $keterangan"),
+                            Text("Qty : $qty"),
+                            Text("Tanggal Pinjam : $pinjam"),
+                            Text("Tanggal Kembali : $kembali"),
                           ],
                         ),
                       );

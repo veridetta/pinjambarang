@@ -32,7 +32,7 @@ class _AkunPageState extends State<AkunPage> {
         email = userData["email"];
         mobileNumber = userData["mobileNumber"];
         userType = userData["userType"];
-        collegeName = userData["collegeName"];
+        collegeName = userData["divisiName"];
       });
     }
   }
@@ -82,7 +82,7 @@ class _AkunPageState extends State<AkunPage> {
                         case 'mobileNumber':
                           mobileNumber = value;
                           break;
-                        case 'collegeName':
+                        case 'divisiName':
                           collegeName = value;
                           break;
                         case 'userType':
@@ -144,7 +144,7 @@ class _AkunPageState extends State<AkunPage> {
             var username = data['name'];
             var email = data['email'];
             var mobileNumber = data['mobileNumber'];
-            var collegeName = data['collegeName'];
+            var collegeName = data['divisiName'];
             var userType = data['userType'];
 
             return ListView(
@@ -169,8 +169,8 @@ class _AkunPageState extends State<AkunPage> {
                   onTap: () => _showEditDialog('mobileNumber'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.school),
-                  title: Text('College Name'),
+                  leading: Icon(Icons.work),
+                  title: Text('Divisi Name'),
                   subtitle: Text(collegeName ?? 'Loading...'),
                   onTap: () => _showEditDialog('collegeName'),
                 ),
@@ -178,7 +178,6 @@ class _AkunPageState extends State<AkunPage> {
                   leading: Icon(Icons.person),
                   title: Text('User Type'),
                   subtitle: Text(userType ?? 'Loading...'),
-                  onTap: () => _showEditDialog('userType'),
                 ),
               ],
             );

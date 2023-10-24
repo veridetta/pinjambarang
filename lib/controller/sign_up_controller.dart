@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pinjambarang/Screens/user/user_page.dart';
 
 import '../Screens/homepage/home_page.dart';
 import '../models/file_model.dart';
@@ -17,15 +18,7 @@ class SignUpController extends GetxController {
     update();
   }
 
-  FileModel? _resumeFile;
-  FileModel? get resumeFile => _resumeFile;
-  void setResumeFile(FileModel? file) {
-    _resumeFile = file;
-    debugPrint("Updated ResumeFile: ${resumeFile!.filename}");
-    update();
-  }
-
-  String? _userType = "Student";
+  String? _userType = "Peminjam";
   String? get userType => _userType;
   void setUserType(String? text) {
     _userType = text;
@@ -65,56 +58,62 @@ class SignUpController extends GetxController {
     update();
   }
 
-  String? _collegeName;
-  String? get collegeName => _collegeName;
-  void setCollegeName(String? text) {
-    _collegeName = text;
-    debugPrint("Updated collegeName: $collegeName");
-    update();
-  }
-
-  String? _admissionYear;
-  String? get admissionYear => _admissionYear;
-  void setAdmissionYear(String? text) {
-    _admissionYear = text;
-    debugPrint("Updated admissionYear: $admissionYear");
-    update();
-  }
-
-  String? _passOutYear;
-  String? get passOutYear => _passOutYear;
-  void setPassOutYear(String? text) {
-    _passOutYear = text;
-    debugPrint("Updated passOutYear: $passOutYear");
+  String? _divisiName;
+  String? get divisiName => _divisiName;
+  void setDivisiName(String? text) {
+    _divisiName = text;
+    debugPrint("Updated divisiName: $divisiName");
     update();
   }
 
   Future postSignUpDetails() async {
-    String newDocId =
-        FirebaseAuth.instance.currentUser?.uid ?? ''; // ID dokumen yang baru
+    try {
+      String newDocId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
-// Membuat dokumen baru dengan ID baru
-    DocumentReference newDocRef =
-        FirebaseFirestore.instance.collection('user').doc(newDocId);
+      DocumentReference newDocRef =
+      FirebaseFirestore.instance.collection('user').doc(newDocId);
 
-    String imageUrl = await uploadImageFile(); // Upload image and get URL
+      String imageUrl = await uploadImageFile();
 
-// Menyimpan data ke dokumen baru
-    await newDocRef.set({
-      'docId': newDocId,
-      'uid': FirebaseAuth.instance.currentUser!.uid,
-      'userType': userType,
-      'name': name,
-      'email': email,
-      'password': password,
-      'mobileNumber': mobileNumber,
-      'collegeName': collegeName,
-      'imageUrl': imageUrl,
-    });
+      await newDocRef.set({
+        'docId': newDocId,
+        'uid': FirebaseAuth.instance.currentUser!.uid,
+        'userType': userType,
+        'name': name,
+        'email': email,
+        'password': password,
+        'mobileNumber': mobileNumber,
+        'divisiName': divisiName,
+        'imageUrl': imageUrl,
+      });
 
-    uploadResumeFile();
-    await Get.offAll(const HomeScreen());
+      // Menampilkan snackbar sukses
+      Get.showSnackbar(GetBar(
+        message: "Data berhasil disimpan",
+        duration: const Duration(seconds: 3),
+      ));
+
+      // Navigasi ke halaman HomeScreen setelah menutup snackbar
+      Future.delayed(const Duration(seconds: 3), () {
+        //cekk userType
+        if(userType== "Peminjam"){
+          Get.offAll(const UserScreen());
+        }else{
+          Get.offAll(const HomeScreen());
+        }
+      });
+    } catch (error) {
+      if (error is FirebaseAuthException) {
+        Get.showSnackbar(
+          GetBar(
+            message: error.toString(),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
+
 
   Future<String> uploadImageFile() async {
     var uploadTask = await FirebaseStorage.instance
@@ -125,12 +124,6 @@ class SignUpController extends GetxController {
     return downloadURL.toString(); // Return the download URL
   }
 
-  Future uploadResumeFile() async {
-    await FirebaseStorage.instance
-        .ref('files/${resumeFile!.filename}')
-        .putData(resumeFile!.fileBytes);
-  }
-
   Future<bool> registerUser(String email, String password) async {
     try {
       var response = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -138,14 +131,27 @@ class SignUpController extends GetxController {
         password: password,
       );
 
+      // SnackBar dengan pesan sukses
+      Get.showSnackbar(
+        const GetBar(
+          message: "Registration successful",
+          duration: Duration(seconds: 3), // SnackBar akan hilang setelah 3 detik
+        ),
+      );
+
       return true;
     } catch (error) {
       if (error is FirebaseAuthException) {
-        Get.showSnackbar(GetSnackBar(
-          message: error.toString(),
-        ));
+        // SnackBar dengan pesan error
+        Get.showSnackbar(
+          GetBar(
+            message: error.toString(),
+            duration: const Duration(seconds: 3),
+          ),
+        );
       }
     }
     return false;
   }
+
 }
