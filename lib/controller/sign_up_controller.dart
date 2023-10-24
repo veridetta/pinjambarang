@@ -3,9 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pinjambarang/Screens/user/user_page.dart';
 
 import '../Screens/homepage/home_page.dart';
+import '../Screens/homepage/pinjaman_page.dart';
+import '../Screens/user/user_page.dart';
 import '../models/file_model.dart';
 
 class SignUpController extends GetxController {

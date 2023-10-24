@@ -4,12 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:pinjambarang/Screens/user/user_page.dart';
 
 import '../../../components/my_button.dart';
 import '../../../components/my_textfield.dart';
 import '../../homepage/home_page.dart';
 import '../../signup/sign_up.dart';
+import '../../user/user_page.dart';
 
 class LoginBodyScreen extends StatefulWidget {
   const LoginBodyScreen({super.key});

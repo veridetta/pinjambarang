@@ -9,10 +9,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:pinjambarang/Screens/user/components/user_page_body.dart';
 import 'package:flutter/material.dart';
 
 import '../homepage/components/home_page_body.dart';
+import 'components/user_page_body.dart';
 
 class AddPinjamPage extends StatefulWidget {
   const AddPinjamPage({Key? key}) : super(key: key);

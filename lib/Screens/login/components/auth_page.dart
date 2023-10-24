@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pinjambarang/Screens/user/user_page.dart';
 
 import '../../homepage/home_page.dart';
+import '../../user/user_page.dart';
 import '../login.dart';
 
 class AuthPage extends StatelessWidget {

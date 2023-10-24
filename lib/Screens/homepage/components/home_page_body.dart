@@ -3,13 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
-import 'package:pinjambarang/Screens/barang/editBarangPage.dart';
-import 'package:pinjambarang/Screens/homepage/components/pinjaman_page_body.dart';
 
 import '../../account/akunPage.dart';
 import '../../article/detailArtikelPage.dart';
 import '../../barang/addBarangPage.dart';
+import '../../barang/editBarangPage.dart';
 import '../../login/login.dart';
+import 'pinjaman_page_body.dart';
 
 class HomeScreenBody extends StatefulWidget {
   const HomeScreenBody({Key? key}) : super(key: key);

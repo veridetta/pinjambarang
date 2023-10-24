@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="pinjambarang"
+        android:label="Aplikasi Pinjam Barang PT SURYABUMI AGROLANGGENG"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

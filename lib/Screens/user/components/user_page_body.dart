@@ -3,14 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
-import 'package:pinjambarang/Screens/barang/editBarangPage.dart';
-import 'package:pinjambarang/Screens/homepage/home_page.dart';
-import 'package:pinjambarang/Screens/user/addPinjamPage.dart';
 
 import '../../account/akunPage.dart';
 import '../../article/detailArtikelPage.dart';
 import '../../barang/addBarangPage.dart';
 import '../../login/login.dart';
+import '../addPinjamPage.dart';
 
 class UserScreenBody extends StatefulWidget {
   const UserScreenBody({Key? key}) : super(key: key);

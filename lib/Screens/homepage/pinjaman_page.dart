@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 import 'components/pinjaman_page_body.dart';
 
-class UserScreen extends StatefulWidget {
-  const UserScreen({super.key});
+class PinjamanScreen extends StatefulWidget {
+  const PinjamanScreen({super.key});
 
   @override
-  State<UserScreen> createState() => _UserScreenState();
+  State<PinjamanScreen> createState() => _UserScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class _UserScreenState extends State<PinjamanScreen> {
   final user = FirebaseAuth.instance.currentUser!;
 
   void signUserOut() {
