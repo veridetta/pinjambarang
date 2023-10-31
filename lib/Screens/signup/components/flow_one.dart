@@ -52,22 +52,6 @@ class _SignUpOneState extends State<SignUpOne> {
                 const SizedBox(
                   width: 67,
                 ),
-                Center(
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    scale: 1.5,
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    "Sign Up",
-                    style: GoogleFonts.poppins(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: HexColor("#4f4f4f"),
-                    ),
-                  ),
-                ),
               ],
             ),
             const SizedBox(
@@ -78,6 +62,22 @@ class _SignUpOneState extends State<SignUpOne> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      scale: 1.5,
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      "Sign Up",
+                      style: GoogleFonts.poppins(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: HexColor("#4f4f4f"),
+                      ),
+                    ),
+                  ),
                   // User Type Dropdown
                   Text(
                     "User Type",
